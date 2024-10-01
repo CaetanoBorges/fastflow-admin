@@ -21,4 +21,4 @@ $db->update("mesa")->set(["ocupada='0'","codigo=''"])->where(["numeromesa='$mesa
 $db->update("mesaocupada")->set(["desocupou='1'"])->where(["mesa='$mesa'","usuario='$usuario'"])->executaQuery();
 $db->update("conta")->set(["fechado='1'","fecho='$fecho'","cliente='$cliente'", "valor='$valor'","desconto='$desconto'","total='$total'","quemfechou='$quemfechou'"])->where(["identificador='$conta'","usuario='$usuario'","mesa='$mesa'"])->executaQuery();
 
-echo json_encode(["payload"=>$_POST,"ok"=>true]);
+echo json_encode(["payload"=>$_POST,"ok"=>true]); 

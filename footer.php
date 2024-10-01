@@ -18,6 +18,7 @@
 
     $.get("backEnd/jsRequests/pullingPedidos.php",{user: user}).done(function(dados){
       var res = localStorage.getItem("pullingPedidos");
+      console.log(dados);
       if(res == dados){
         if(($(".res-pedidos").html()).length < 50){
           
