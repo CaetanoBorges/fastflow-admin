@@ -16,10 +16,10 @@ if (isset($_SESSION['REST-admin'])) {
 
     // Converte os dados para JSON
     $dados_json = json_encode($metadata);
-
+    $usuario = AX::attr($_SESSION["metadata"]["usuario"]);
     // Imprime o valor diretamente no script JavaScript
     echo "<script>var dadosUsuario = $dados_json;</script>";
-    $mesas = $db->select()->from("mesa")->pegaResultados();
+    $mesas = $db->select()->from("mesa")->where(["usuario=$usuario"])->pegaResultados();
 
 ?>
 <!DOCTYPE html>
@@ -75,7 +75,7 @@ if (isset($_SESSION['REST-admin'])) {
                                     foreach ($mesas as $k => $v) {
                                         $hoje = date("d-m-Y");
                                         $mesa = $v["numeromesa"];
-                                        $totalHoje = $db->select(["SUM(total)"])->from("conta")->where(["quando LIKE '%$hoje%'","fechado='1'","mesa='$mesa'"])->pegaResultado()["SUM(total)"];
+                                        $totalHoje = $db->select(["SUM(total)"])->from("conta")->where(["usuario=$usuario","quando LIKE '%$hoje%'","fechado='1'","mesa='$mesa'"])->pegaResultado()["SUM(total)"];
                                         $cor = "#6777ef";
                                         $codigo = " &nbsp;";
                                         if($v["ocupada"]){

@@ -150,6 +150,7 @@ if (isset($_SESSION['REST-admin'])) {
       <li><a class="nav-link" href="mesas.php"><i class="fas fa-dice-d6"></i></i><span>Mesas</span></a></li>
       <li><a class="nav-link" href="produtos.php"><i class="fab fa-product-hunt"></i> <span>Produtos</span></a></li>
       <li><a class="nav-link" href="reclamacoes.php"><i class="fas fa-file-invoice"></i><span>Reclamações</span></a></li>
+      <li><a class="nav-link" href="notificar.php"><i class="fas fa-bell"></i><span>Notificar</span></a></li>
     </ul>
 
   </aside>

@@ -12,11 +12,9 @@ include("backEnd/FERRAMENTAS/Funcoes.php");
 
 $funcoes = new Funcoes;
 $db = new dbWrapper($funcoes::conexao());
-
+$usuario = AX::attr($_SESSION["metadata"]["usuario"]);
 $arrayRes = [];
-$mesas = $db->select()->from("mesa")->pegaResultados();
-
-
+$mesas = $db->select()->from("mesa")->where(["usuario=$usuario"])->pegaResultados();
 ?>
 <html lang="en">
 

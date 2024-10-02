@@ -3,6 +3,7 @@ session_start();
 if(!isset($_SESSION['REST-admin'])){
    header("Location: index.php");
 }
+$usuario = AX::attr($_SESSION["metadata"]["usuario"]);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -64,7 +65,7 @@ if(!isset($_SESSION['REST-admin'])){
                   </div>
                   <div class="card-body">
                     <form action="backEnd/Mesa/add.php" method="post">
-                      <input type="hidden" name="user" value="<?php echo "6643aeb808e91"; ?>">
+                      <input type="hidden" name="user" value="<?php echo $usuario; ?>">
                       <div class="form-group">
                         <label>Número da mesa</label>
                         <input type="text" name="numero" class="form-control" required>

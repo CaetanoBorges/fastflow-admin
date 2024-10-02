@@ -12,8 +12,8 @@ include("backEnd/FERRAMENTAS/Funcoes.php");
 
 $funcoes = new Funcoes;
 $db = new dbWrapper($funcoes::conexao());
-$user = "6643aeb808e91";
-$categorias = $db->select()->from("produtocategoria")->where(["usuario='$user'"])->pegaResultados();
+$usuario = AX::attr($_SESSION["metadata"]["usuario"]);
+$categorias = $db->select()->from("produtocategoria")->where(["usuario='$usuario'"])->pegaResultados();
 ?>
 <html lang="en">
 <head>
@@ -76,7 +76,7 @@ $categorias = $db->select()->from("produtocategoria")->where(["usuario='$user'"]
                   </div>
                   <div class="card-body">
                     <form action="backEnd/Produto/add.php" method="post" enctype="multipart/form-data">
-                      <input type="hidden" name="user" value="<?php echo "6643aeb808e91"; ?>">
+                      <input type="hidden" name="user" value="<?php echo $usuario; ?>">
                     <div class="form-group">
                       <label>Categoria</label>
                       <select name="categoria" id="" class="form-control">

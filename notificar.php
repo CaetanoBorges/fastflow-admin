@@ -1,7 +1,7 @@
 <?php
 session_start();
-if(!isset($_SESSION['REST-admin'])){
-   header("Location: index.php");
+if (!isset($_SESSION['REST-admin'])) {
+    header("Location: index.php");
 }
 ?>
 <!DOCTYPE html>
@@ -12,16 +12,17 @@ include("backEnd/FERRAMENTAS/Funcoes.php");
 
 $funcoes = new Funcoes;
 $db = new dbWrapper($funcoes::conexao());
-
 $usuario = AX::attr($_SESSION["metadata"]["usuario"]);
 $arrayRes = [];
-$reclamacoes = $db->select()->from("reclamacao")->where(["usuario=$usuario"])->pegaResultados();
+$subscritos = $db->select(["COUNT(*)"])->from("push")->where(["usuario=$usuario"])->pegaResultado()["COUNT(*)"];
+$notificacoes = $db->select()->from("notificacoes")->where(["usuario=$usuario"])->pegaResultados();
 ?>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-    <title>Reclamações</title>
+    <title>Notificar</title>
 
     <!-- General CSS Files -->
     <link rel="stylesheet" href="assets/modules/bootstrap/css/bootstrap.min.css">
@@ -62,23 +63,23 @@ $reclamacoes = $db->select()->from("reclamacao")->where(["usuario=$usuario"])->p
             <div class="main-content">
                 <section class="section">
                     <div class="section-header">
-                        <h1>Reclamações</h1>
+                        <h1>Notificar</h1>
                         <div class="section-header-breadcrumb">
                             <div class="breadcrumb-item active"><a href="#">Inicio</a></div>
-                            <div class="breadcrumb-item"><a href="#">Reclamações</a></div>
+                            <div class="breadcrumb-item"><a href="#">Notificar</a></div>
                         </div>
                     </div>
 
                     <div class="section-body">
-
+                        <h3>Tem <?php echo $subscritos ?> inscritos</h3>
                         <div class="row">
                             <div class="col-12 col-md-6 col-lg-6">
                                 <div class="card p-3">
                                     <?php
-                                    foreach ($reclamacoes as $k => $v) {
+                                    foreach ($notificacoes as $k => $v) {
                                     ?>
                                         <div>
-                                            <button type="button" class="btn btn-lg  <?php if(!$v["estado"]){ echo 'btn-danger'; }else{ echo 'btn-light'; } ?> form-control" data-toggle="modal" data-target="#exampleModal-<?php echo $v["identificador"] ?>" >
+                                            <button type="button" class="btn btn-lg btn-light form-control" data-toggle="modal" data-target="#exampleModal-<?php echo $v["identificador"] ?>">
                                                 <?php echo $v["quando"] ?>
                                             </button>
                                         </div> <br>
@@ -88,6 +89,8 @@ $reclamacoes = $db->select()->from("reclamacao")->where(["usuario=$usuario"])->p
                                 </div>
                             </div>
                             <div class="col-12 col-md-6 col-lg-6">
+                                <button type="button" class="btn btn-lg btn-primary form-control" data-toggle="modal" data-target="#exampleModal-Notificar">Notificar</button>
+
                             </div>
                         </div>
                     </div>
@@ -95,7 +98,7 @@ $reclamacoes = $db->select()->from("reclamacao")->where(["usuario=$usuario"])->p
             </div>
             <!-- footer include here -->
             <?php
-                include("footer.php");
+            include("footer.php");
             ?>
         </div>
     </div>
@@ -127,7 +130,7 @@ $reclamacoes = $db->select()->from("reclamacao")->where(["usuario=$usuario"])->p
 </body>
 
 <?php
-foreach ($reclamacoes as $k => $v) {
+foreach ($notificacoes as $k => $v) {
 ?>
 
     <!-- Modal -->
@@ -135,40 +138,47 @@ foreach ($reclamacoes as $k => $v) {
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" style="color: <?php if(!$v["estado"]){ echo 'red;'; }else{ echo '#eaeaea'; } ?>">Reclamação <br><?php echo $v["quando"]; ?> </h5>
+                    <h5 class="modal-title" style="color: #eaeaea">Notificação <br><?php echo $v["quando"]; ?> <br>Entregue a <?php echo $v["subscritores"]; ?> subscritores</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div>
-                        <span>Nome</span>
-                        <input type="text" name="nome" class="form-control" placeholder="<?php echo $v["nome"]; ?>" disabled>
-                        <span>Telefone</span>
-                        <input type="text" name="nome" class="form-control" placeholder="<?php echo $v["telefone"]; ?>" disabled>
-                        <span>Email</span>
-                        <input type="text" name="nome" class="form-control" placeholder="<?php echo $v["email"]; ?>" disabled>
-                        <span>Detalhes</span>
-                        <textarea name="" id="" cols="30" rows="10" disabled class="form-control"><?php echo $v["detalhes"]; ?></textarea>
+                        <span>Texto</span>
+                        <textarea name="" id="" cols="30" rows="10" disabled class="form-control"><?php echo $v["notificacao"]; ?></textarea>
                     </div>
-                    <?php if(!$v["estado"]){ ?>
-                            <form method="post" action="backEnd/Reclamacao/visto.php" class="p-5"> 
-                                <div class="form-group">
-                                    <input type="hidden" name="user" value="<?php echo "6643aeb808e91"; ?>">
-                                    <input type="hidden" name="reclamacao" value="<?php echo $v["identificador"] ?>">
-                                </div>
-                                <button type="submit" class="btn btn-danger">Marcar como visto</button>
-                            </form>
-                        <?php } ?>
                 </div>
-                </div>
+            </div>
         </div>
     </div>
 <?php }
 ?>
 
+<!-- Modal -->
+<div class="modal fade" id="exampleModal-Notificar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" style="color: #eaeaea">Enviar notificação</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post">
+                    <div>
+                        <textarea name="" id="" cols="30" rows="10" class="form-control"></textarea>
+                        <button type="submit" class="btn btn-light">Enviar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
-<?php 
-    include("_partes/notificacao.php");
+<?php
+include("_partes/notificacao.php");
 ?>
+
 </html>

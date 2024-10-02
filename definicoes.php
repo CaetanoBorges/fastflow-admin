@@ -14,7 +14,7 @@ $funcoes = new Funcoes;
 $db = new dbWrapper($funcoes::conexao());
 
 if (isset($_POST["user"])) {
-    $usuario = AX::attr($_POST["user"]);
+    $usuario = AX::attr($_SESSION["metadata"]["usuario"]);
     $img = time() . "-" . $_FILES["imagem"]["name"];
 
     $defIMG = $db->select(["img"])->from("usuario")->where(["identificador=$usuario"])->pegaResultado()["img"];
@@ -130,7 +130,7 @@ $def = $db->select()->from("usuario")->where(["identificador='$user'"])->pegaRes
                                 
                                     <div class="box-s">
                                         <div class="modal-box">
-                                            <button class="btn form-control" data-toggle="modal" data-target="#myModal">Alterar Imagem</button>
+                                            <button class="btn form-control" data-toggle="modal" data-target="#myModal">Alterar Logotipo</button>
                                         </div>
                                     </div>
                                     <div class="box-s">

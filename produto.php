@@ -16,9 +16,9 @@ $db = new dbWrapper($funcoes::conexao());
 
 $produtoId = $_GET["id"];
 $userId = $_GET["user"];
-
-$categorias = $db->select()->from("produtocategoria")->where(["usuario='$userId'"])->pegaResultados();
-$produto = $db->select()->from("produto")->where(["identificador='$produtoId'", "usuario='$userId'"])->pegaResultado();
+$usuario = AX::attr($_SESSION["metadata"]["usuario"]);
+$categorias = $db->select()->from("produtocategoria")->where(["usuario=$usuario"])->pegaResultados();
+$produto = $db->select()->from("produto")->where(["identificador='$produtoId'", "usuario=$usuario"])->pegaResultado();
 
 ?>
 <html lang="en">

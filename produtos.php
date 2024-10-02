@@ -12,12 +12,12 @@ include("backEnd/FERRAMENTAS/Funcoes.php");
 
 $funcoes = new Funcoes;
 $db = new dbWrapper($funcoes::conexao());
-
+$usuario = AX::attr($_SESSION["metadata"]["usuario"]);
 $arrayRes = [];
-$categorias = $db->select()->from("produtocategoria")->pegaResultados();
+$categorias = $db->select()->from("produtocategoria")->where(["usuario=$usuario"])->pegaResultados();
 foreach ($categorias as $k => $cat) {
     $categoria = $cat["nome"];
-    $res = $db->select()->from("produto")->where(["categoria='$categoria'"])->pegaResultados();
+    $res = $db->select()->from("produto")->where(["categoria='$categoria'", "usuario=$usuario"])->pegaResultados();
     $arrayRes[$categoria] = $res;
 }
 ?>

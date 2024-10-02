@@ -13,20 +13,20 @@ include("backEnd/FERRAMENTAS/Funcoes.php");
 
 $funcoes = new Funcoes;
 $db = new dbWrapper($funcoes::conexao());
-
+$usuario = AX::attr($_SESSION["metadata"]["usuario"]);
 
 
 $ID__MESA = $_GET["opt"];
 
-$conta =  $db->select()->from("conta")->where(["mesa='$ID__MESA'", "fechado=0"])->pegaResultado();
+$conta =  $db->select()->from("conta")->where(["usuario=$usuario","mesa='$ID__MESA'", "fechado=0"])->pegaResultado();
 
 $ID__CONTA = $conta["identificador"];
 
-$mesa =  $db->select()->from("mesa")->where(["numeromesa='$ID__MESA'"])->pegaResultado();
-$pedidos =  $db->select()->from("pedido")->where(["conta='$ID__CONTA'", "aceite is null"])->pegaResultados();
-$pedidosAceitos =  $db->select()->from("pedido")->where(["conta='$ID__CONTA'", "aceite='1'"])->pegaResultados();
-$totalConta =  $db->select(["SUM(total)"])->from("pedido")->where(["conta='$ID__CONTA'", "aceite='1'"])->pegaResultado()["SUM(total)"];
-$NOME_CLIENTE_CONTA_MESA =  $db->select(["nome"])->from("mesaocupada")->where(["mesa='$ID__MESA'", "desocupou='0'"])->pegaResultado()["nome"];
+$mesa =  $db->select()->from("mesa")->where(["usuario=$usuario","numeromesa='$ID__MESA'"])->pegaResultado();
+$pedidos =  $db->select()->from("pedido")->where(["usuario=$usuario","conta='$ID__CONTA'", "aceite is null"])->pegaResultados();
+$pedidosAceitos =  $db->select()->from("pedido")->where(["usuario=$usuario","conta='$ID__CONTA'", "aceite='1'"])->pegaResultados();
+$totalConta =  $db->select(["SUM(total)"])->from("pedido")->where(["usuario=$usuario","conta='$ID__CONTA'", "aceite='1'"])->pegaResultado()["SUM(total)"];
+$NOME_CLIENTE_CONTA_MESA =  $db->select(["nome"])->from("mesaocupada")->where(["usuario=$usuario","mesa='$ID__MESA'", "desocupou='0'"])->pegaResultado()["nome"];
 //var_dump($mesa);
 $todosPedidos;
 foreach ($pedidos as $k => $v) {
@@ -90,13 +90,13 @@ foreach ($pedidosAceitos as $k => $v) {
 }
 //echo $itens;
 
-$produtos = $db->select(["categoria"])->from("produto")->groupBy(["categoria"])->pegaResultados();
+$produtos = $db->select(["categoria"])->from("produto")->where(["usuario=$usuario"])->groupBy(["categoria"])->pegaResultados();
 
 $todosProdutos;
 foreach ($produtos as $key => $value) {
 
   $cat = $value["categoria"];
-  $todosProdutos[$value["categoria"]] = $db->select()->from("produto")->where(["categoria='$cat'"])->pegaResultados();
+  $todosProdutos[$value["categoria"]] = $db->select()->from("produto")->where(["usuario=$usuario","categoria='$cat'"])->pegaResultados();
 }
 
 ?>
