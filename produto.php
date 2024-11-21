@@ -1,7 +1,7 @@
 <?php
 session_start();
-if(!isset($_SESSION['REST-admin'])){
-   header("Location: index.php");
+if (!isset($_SESSION['REST-admin'])) {
+    header("Location: index.php");
 }
 ?>
 <!DOCTYPE html>
@@ -30,6 +30,7 @@ $produto = $db->select()->from("produto")->where(["identificador='$produtoId'", 
 
     <!-- General CSS Files -->
     <link rel="stylesheet" href="assets/modules/bootstrap/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/modules/fontawesome/css/all.min.css">
 
     <!-- CSS Libraries -->
@@ -81,7 +82,7 @@ $produto = $db->select()->from("produto")->where(["identificador='$produtoId'", 
                             <div class="col-12 col-md-6 col-lg-6">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h4>Preencha os campos devidamente</h4>
+                                        <input type="checkbox" <?php if ($produto["disponivel"] == 1) echo "checked" ?> data-toggle="toggle" data-on="Em stock" data-off="Não tem" data-onstyle="success" data-offstyle="danger" id="disponivel"> 
                                     </div>
                                     <div class="card-body">
                                         <div class="form-group">
@@ -97,7 +98,7 @@ $produto = $db->select()->from("produto")->where(["identificador='$produtoId'", 
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <div class="input-group-text">
-                                                        $
+                                                        AOA
                                                     </div>
                                                 </div>
                                                 <input type="text" value="<?php echo $produto["preco"] ?>" class="form-control currency" disabled>
@@ -133,6 +134,8 @@ $produto = $db->select()->from("produto")->where(["identificador='$produtoId'", 
     <script src="assets/js/stisla.js"></script>
 
     <!-- JS Libraies -->
+    
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
     <script src="assets/modules/cleave-js/dist/cleave.min.js"></script>
     <script src="assets/modules/cleave-js/dist/addons/cleave-phone.us.js"></script>
     <script src="assets/modules/jquery-pwstrength/jquery.pwstrength.min.js"></script>
@@ -144,8 +147,10 @@ $produto = $db->select()->from("produto")->where(["identificador='$produtoId'", 
     <script src="assets/modules/jquery-selectric/jquery.selectric.min.js"></script>
 
     <!-- Template JS File -->
+  <script src="assets/components/loader/loader.js"></script>
     <script src="assets/js/scripts.js"></script>
     <script src="assets/js/custom.js"></script>
+    
 </body>
 <!-- Modal -->
 <div class="modal fade" id="alterarimagem" tabindex="-1" aria-labelledby="alterarimagemLabel" aria-hidden="true">
@@ -209,7 +214,7 @@ $produto = $db->select()->from("produto")->where(["identificador='$produtoId'", 
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <div class="input-group-text">
-                                    $
+                                    AOA
                                 </div>
                             </div>
                             <input type="text" name="preco" value="<?php echo $produto["preco"] ?>" class="form-control currency" required>
@@ -224,6 +229,33 @@ $produto = $db->select()->from("produto")->where(["identificador='$produtoId'", 
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+        
+    var loader = new debliwuiloader();
+    document.querySelector("body").append(loader);
+
+        $('#disponivel').change(function() {
+            loader.abrir();
+            if (this.checked) {
+                $('#disponivel').val(1);
+            } else {
+                $('#disponivel').val(0);
+            }
+            var disponibilidade = (this.value);
+            $.post("backEnd/Produto/disponibilidade.php", {
+                disponibilidade: disponibilidade,
+                produto: '<?php echo $produto["identificador"] ?>',
+                user: '<?php echo $produto["usuario"] ?>'
+            }).done(function(data) {
+                console.log(data);
+            }).always(function() {
+                loader.fechar();
+            });
+        });
+    });
+</script>
 <?php
 include("_partes/notificacao.php");
 ?>
