@@ -54,7 +54,7 @@ if(isset($_POST['usuario']) and !empty($_POST['usuario'])){
         }
         else {
             $conexao = Funcoes::conexao();
-            $query = $conexao -> prepare("DELETE FROM push WHERE usuario = ? AND id = ?");
+            $query = $conexao -> prepare("DELETE FROM push WHERE id = ?");
             $query->bindValue(1,$v['id']);
             $query->execute();
         }

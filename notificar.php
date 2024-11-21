@@ -15,7 +15,7 @@ $db = new dbWrapper($funcoes::conexao());
 $usuario = AX::attr($_SESSION["metadata"]["usuario"]);
 $arrayRes = [];
 $subscritos = $db->select(["COUNT(*)"])->from("push")->where(["usuario=$usuario"])->pegaResultado()["COUNT(*)"];
-$notificacoes = $db->select()->from("notificacoes")->where(["usuario=$usuario"])->pegaResultados();
+$notificacoes = $db->select()->from("notificacoes")->where(["usuario=$usuario"])->orderBy("identificador DESC")->limit(10)->pegaResultados();
 rsort($notificacoes);
 $dados = $db->select()->from("usuario")->where(["identificador=$usuario"])->pegaResultado();
 //var_dump($dados);
@@ -200,7 +200,7 @@ include("_partes/notificacao.php");
         e.preventDefault();
         loader.abrir();
         $.post("BackEnd/jsRequests/notificar.php",$(this).serialize(),function(data){
-            
+            console.log(data);
             var notificacao = JSON.parse(data);
             console.log(data);
             $("#form-notificar").trigger("reset");
@@ -210,6 +210,8 @@ include("_partes/notificacao.php");
                 location.reload();
             }
 
-        })
+        }).always(function(){
+            loader.fechar();
+        });
     });
 </script>
