@@ -16,6 +16,9 @@ $usuario = AX::attr($_SESSION["metadata"]["usuario"]);
 $arrayRes = [];
 $subscritos = $db->select(["COUNT(*)"])->from("push")->where(["usuario=$usuario"])->pegaResultado()["COUNT(*)"];
 $notificacoes = $db->select()->from("notificacoes")->where(["usuario=$usuario"])->pegaResultados();
+rsort($notificacoes);
+$dados = $db->select()->from("usuario")->where(["identificador=$usuario"])->pegaResultado();
+//var_dump($dados);
 ?>
 <html lang="en">
 
@@ -127,6 +130,9 @@ $notificacoes = $db->select()->from("notificacoes")->where(["usuario=$usuario"])
     <!-- Template JS File -->
     <script src="assets/js/scripts.js"></script>
     <script src="assets/js/custom.js"></script>
+
+  <script src="assets/components/loader/loader.js"></script>
+  
 </body>
 
 <?php
@@ -138,7 +144,7 @@ foreach ($notificacoes as $k => $v) {
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" style="color: #eaeaea">Notificação <br><?php echo $v["quando"]; ?> <br>Entregue a <?php echo $v["subscritores"]; ?> subscritores</h5>
+                    <h5 class="modal-title" >Notificação <br><?php echo $v["quando"]; ?> <br>Entregue a <?php echo $v["subscritores"]; ?> subscritores</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -155,7 +161,7 @@ foreach ($notificacoes as $k => $v) {
 <?php }
 ?>
 
-<!-- Modal -->
+<!-- Modal Notificar-->
 <div class="modal fade" id="exampleModal-Notificar" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -166,9 +172,12 @@ foreach ($notificacoes as $k => $v) {
                 </button>
             </div>
             <div class="modal-body">
-                <form action="" method="post">
+                <form action="" method="post" id="form-notificar">
                     <div>
-                        <textarea name="" id="" cols="30" rows="10" class="form-control"></textarea>
+                        <input type="hidden" name="usuario"  value="<?php echo $_SESSION["metadata"]["usuario"]; ?>">
+                        <input type="hidden" name="titulo"  value="<?php echo $dados["nome"]; ?>">
+                        <input type="text"  value="<?php echo $dados["nome"]; ?>" class="form-control" readonly> <br>
+                        <textarea name="mensagem" id="" cols="30" rows="10" class="form-control" maxlength="120" required></textarea> <br>
                         <button type="submit" class="btn btn-light">Enviar</button>
                     </div>
                 </form>
@@ -182,3 +191,25 @@ include("_partes/notificacao.php");
 ?>
 
 </html>
+<script>
+    
+    var loader = new debliwuiloader();
+    document.querySelector("body").append(loader);
+    
+    $("#form-notificar").submit(function(e){
+        e.preventDefault();
+        loader.abrir();
+        $.post("BackEnd/jsRequests/notificar.php",$(this).serialize(),function(data){
+            
+            var notificacao = JSON.parse(data);
+            console.log(data);
+            $("#form-notificar").trigger("reset");
+            $("#exampleModal-Notificar").modal("hide");
+
+            if(notificacao.ok){
+                location.reload();
+            }
+
+        })
+    });
+</script>
