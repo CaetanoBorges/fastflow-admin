@@ -3,7 +3,8 @@ session_start();
 if(!isset($_SESSION['REST-admin'])){
    header("Location: index.php");
 }
-$usuario = AX::attr($_SESSION["metadata"]["usuario"]);
+
+$usuario = ($_SESSION["metadata"]["usuario"]);
 ?>
 <!DOCTYPE html>
 <html lang="en">

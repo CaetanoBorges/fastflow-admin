@@ -33,7 +33,7 @@ class dbWrapper
         $this->query .= sprintf("SELECT COUNT({$count}) AS {$count} "); 
 
         return $this;
-    }
+    } 
 
     public function from(string $tableName)
     {
